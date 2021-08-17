@@ -8,13 +8,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('todo app'),
+        title: const Text('todo app'),
       ),
       body: StreamBuilder<List<Todo>>(
         stream: database.todoDao.watchAll(),
         builder: (ctx, snp) {
           if (!snp.hasData) {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           } else {
             final data = snp.data!;
             data.sort((a, b) {
@@ -31,8 +31,7 @@ class HomePage extends StatelessWidget {
                 trailing: Checkbox(
                   value: data[i].done,
                   onChanged: (value) async {
-                    await database.todoDao
-                        .updateDoneStatus(data[i].id, value ?? false);
+                    await database.todoDao.updateDoneStatus(id: data[i].id, done: value ?? false);
                   },
                 ),
               ),
@@ -45,8 +44,8 @@ class HomePage extends StatelessWidget {
           showDialogWithFields(context);
         },
         tooltip: 'Add todo',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -56,22 +55,22 @@ class HomePage extends StatelessWidget {
       builder: (ctx) {
         final todoController = TextEditingController();
         return AlertDialog(
-          title: Text('Add todo'),
+          title: const Text('Add todo'),
           content: TextFormField(
             controller: todoController,
-            decoration: InputDecoration(hintText: 'Todo'),
+            decoration: const InputDecoration(hintText: 'Todo'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
-                await database.todoDao.createTodo(todoController.text);
                 Navigator.pop(ctx);
+                await database.todoDao.createTodo(todoController.text);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );

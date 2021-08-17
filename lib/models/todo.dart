@@ -18,13 +18,12 @@ class TodoDao extends DatabaseAccessor<AppDatabase> with _$TodoDaoMixin {
     return select(todos).watch();
   }
 
-  Future<void> updateDoneStatus(int id, bool done) async {
+  Future<void> updateDoneStatus({required int id, required bool done}) async {
     await (update(todos)..where((tbl) => tbl.id.equals(id)))
         .write(TodosCompanion(done: Value(done)));
   }
 
   Future<void> createTodo(String content) async {
-    await into(todos)
-        .insert(TodosCompanion(content: Value(content), done: Value(false)));
+    await into(todos).insert(TodosCompanion(content: Value(content), done: const Value(false)));
   }
 }
