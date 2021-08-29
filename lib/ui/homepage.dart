@@ -15,6 +15,8 @@ class HomePage extends StatelessWidget {
         builder: (ctx, snp) {
           if (!snp.hasData) {
             return const SizedBox.shrink();
+          } else if (snp.data!.isEmpty) {
+            return const Center(child: Text('no todos 🎉'));
           } else {
             final data = snp.data!;
             data.sort((a, b) {
@@ -28,10 +30,16 @@ class HomePage extends StatelessWidget {
               itemCount: data.length,
               itemBuilder: (ctx, i) => ListTile(
                 title: Text(data[i].content),
-                trailing: Checkbox(
+                leading: Checkbox(
                   value: data[i].done,
                   onChanged: (value) async {
                     await database.todoDao.updateDoneStatus(id: data[i].id, done: value ?? false);
+                  },
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    await database.todoDao.deleteTodo(data[i].id);
                   },
                 ),
               ),
@@ -67,8 +75,10 @@ class HomePage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(ctx);
-                await database.todoDao.createTodo(todoController.text);
+                if (todoController.text.isNotEmpty) {
+                  Navigator.pop(ctx);
+                  await database.todoDao.createTodo(todoController.text);
+                }
               },
               child: const Text('Save'),
             ),

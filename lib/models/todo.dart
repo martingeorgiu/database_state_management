@@ -26,4 +26,8 @@ class TodoDao extends DatabaseAccessor<AppDatabase> with _$TodoDaoMixin {
   Future<void> createTodo(String content) async {
     await into(todos).insert(TodosCompanion(content: Value(content), done: const Value(false)));
   }
+
+  Future<void> deleteTodo(int id) async {
+    await (delete(todos)..where((tbl) => tbl.id.equals(id))).go();
+  }
 }
