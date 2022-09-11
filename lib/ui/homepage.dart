@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:moor_state_management/services/database.dart';
 import 'package:moor_state_management/services/registry.dart';
+import 'package:moor_state_management/ui/add_todo_dialog.dart';
 
 class HomePage extends StatelessWidget {
   final database = registry.get<AppDatabase>();
+
+  int todoSort(Todo a, Todo b) {
+    if (a.done) {
+      return 1;
+    }
+    return -1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,34 +22,30 @@ class HomePage extends StatelessWidget {
       body: StreamBuilder<List<Todo>>(
         stream: database.todoDao.watchAll(),
         builder: (ctx, snp) {
-          if (!snp.hasData) {
+          final data = snp.data;
+          if (data == null) {
             return const SizedBox.shrink();
-          } else if (snp.data!.isEmpty) {
+          } else if (data.isEmpty) {
             return const Center(child: Text('no todos 🎉'));
           } else {
-            final data = snp.data!;
-            data.sort((a, b) {
-              if (a.done) {
-                return 1;
-              }
-              return -1;
-            });
+            data.sort(todoSort);
             return ListView.builder(
               shrinkWrap: true,
               itemCount: data.length,
               itemBuilder: (ctx, i) => ListTile(
+                key: ValueKey(data[i].id),
                 title: Text(data[i].content),
                 leading: Checkbox(
                   value: data[i].done,
                   onChanged: (value) async {
-                    await database.todoDao.updateDoneStatus(id: data[i].id, done: value ?? false);
+                    final v = value;
+                    if (v == null) return;
+                    await database.todoDao.updateDoneStatus(id: data[i].id, done: v);
                   },
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await database.todoDao.deleteTodo(data[i].id);
-                  },
+                  onPressed: () => database.todoDao.deleteTodo(data[i].id),
                 ),
               ),
             );
@@ -48,43 +53,10 @@ class HomePage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialogWithFields(context);
-        },
+        onPressed: () => showAddTodoDialog(context, database),
         tooltip: 'Add todo',
         child: const Icon(Icons.add),
       ),
-    );
-  }
-
-  void showDialogWithFields(BuildContext ctx) {
-    showDialog(
-      context: ctx,
-      builder: (ctx) {
-        final todoController = TextEditingController();
-        return AlertDialog(
-          title: const Text('Add todo'),
-          content: TextFormField(
-            controller: todoController,
-            decoration: const InputDecoration(hintText: 'Todo'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (todoController.text.isNotEmpty) {
-                  Navigator.pop(ctx);
-                  await database.todoDao.createTodo(todoController.text);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

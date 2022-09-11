@@ -6,7 +6,7 @@ part of 'database.dart';
 // MoorGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
+// ignore_for_file: type=lint
 class Todo extends DataClass implements Insertable<Todo> {
   final int id;
   final String content;
@@ -76,8 +76,7 @@ class Todo extends DataClass implements Insertable<Todo> {
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(content.hashCode, done.hashCode)));
+  int get hashCode => Object.hash(id, content, done);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -150,23 +149,27 @@ class TodosCompanion extends UpdateCompanion<Todo> {
 }
 
 class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TodosTable(this._db, [this._alias]);
+  $TodosTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _contentMeta = const VerificationMeta('content');
+  @override
   late final GeneratedColumn<String?> content = GeneratedColumn<String?>(
       'content', aliasedName, false,
-      typeName: 'TEXT', requiredDuringInsert: true);
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _doneMeta = const VerificationMeta('done');
+  @override
   late final GeneratedColumn<bool?> done = GeneratedColumn<bool?>(
       'done', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const BoolType(),
       requiredDuringInsert: true,
       defaultConstraints: 'CHECK (done IN (0, 1))');
   @override
@@ -202,13 +205,13 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Todo map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return Todo.fromData(data, _db,
+    return Todo.fromData(data, attachedDatabase,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $TodosTable createAlias(String alias) {
-    return $TodosTable(_db, alias);
+    return $TodosTable(attachedDatabase, alias);
   }
 }
 
