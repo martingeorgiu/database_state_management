@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.moor_state_management">
+    package="com.example.database_state_management">
    <application
-        android:label="moor_state_management"
+        android:label="database_state_management"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

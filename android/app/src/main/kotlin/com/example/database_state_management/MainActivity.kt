@@ -1,4 +1,4 @@
-package com.example.moor_state_management
+package com.example.database_state_management
 
 import io.flutter.embedding.android.FlutterActivity
 

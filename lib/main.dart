@@ -1,6 +1,6 @@
+import 'package:database_state_management/services/registry.dart';
+import 'package:database_state_management/ui/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:moor_state_management/services/registry.dart';
-import 'package:moor_state_management/ui/homepage.dart';
 
 Future<void> main() async {
   await setup();

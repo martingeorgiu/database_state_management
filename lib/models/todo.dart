@@ -1,5 +1,5 @@
-import 'package:moor/moor.dart';
-import 'package:moor_state_management/services/database.dart';
+import 'package:database_state_management/services/database.dart';
+import 'package:drift/drift.dart';
 
 part 'todo.g.dart';
 
@@ -10,9 +10,9 @@ class Todos extends Table {
   BoolColumn get done => boolean()();
 }
 
-@UseDao(tables: [Todos])
+@DriftAccessor(tables: [Todos])
 class TodoDao extends DatabaseAccessor<AppDatabase> with _$TodoDaoMixin {
-  TodoDao(AppDatabase db) : super(db);
+  TodoDao(super.db);
 
   Stream<List<Todo>> watchAll() {
     return select(todos).watch();

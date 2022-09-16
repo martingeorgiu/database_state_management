@@ -1,7 +1,7 @@
+import 'package:database_state_management/services/database.dart';
+import 'package:database_state_management/services/registry.dart';
+import 'package:database_state_management/ui/add_todo_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:moor_state_management/services/database.dart';
-import 'package:moor_state_management/services/registry.dart';
-import 'package:moor_state_management/ui/add_todo_dialog.dart';
 
 class HomePage extends StatelessWidget {
   final database = registry.get<AppDatabase>();
